@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import ChorePageSelector from "@/app/components/ChorePageSelector";
-import ViewToggle from "@/app/components/ViewToggle";
 import StatusFilter from "@/app/components/StatusFilter";
 import ItemCard from "@/app/components/ItemCard";
 import AddItemButton from "@/app/components/AddItemButton";
@@ -20,7 +19,6 @@ export default function MainPage() {
   const [pages, setPages] = useState([]);
   const [selectedPage, setSelectedPage] = useState(pageFromQuery || "");
 
-  const [viewMode, setViewMode] = useState("chores");
   const [filter, setFilter] = useState("notCompleted");
   const [sortBy, setSortBy] = useState("recent");
 
@@ -57,9 +55,12 @@ export default function MainPage() {
       if (!token) return;
 
       try {
-        const res = await axios.get(`https://divide-and-conquer-backend-2.onrender.com/api/chores?pageId=${selectedPage}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `https://divide-and-conquer-backend-2.onrender.com/api/chores?pageId=${selectedPage}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setItems(res.data);
       } catch (err) {
         console.error("Failed to fetch chores:", err);
@@ -94,15 +95,17 @@ export default function MainPage() {
     }
   };
 
-  // Delete handler
   const handleDelete = async (id) => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
 
     try {
-      await axios.delete(`https://divide-and-conquer-backend-2.onrender.com/api/chores/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://divide-and-conquer-backend-2.onrender.com/api/chores/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setItems((prevItems) => prevItems.filter((item) => item._id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
@@ -153,9 +156,30 @@ export default function MainPage() {
           </button>
         </div>
 
-        {/* View Toggle + Status Filter */}
+        {/* Sort and Status Filter (new layout) */}
         <div className="flex justify-between items-center gap-4">
-          <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+          <div className="flex gap-2">
+            <button
+              onClick={() => setSortBy("recent")}
+              className={`px-4 py-2 w-32 text-center rounded transition text-white ${
+                sortBy === "recent"
+                  ? "bg-emerald-600"
+                  : "bg-gray-700 hover:bg-emerald-600"
+              }`}
+            >
+              Most Recent
+            </button>
+            <button
+              onClick={() => setSortBy("dueDate")}
+              className={`px-4 py-2 w-32 text-center rounded transition text-white ${
+                sortBy === "dueDate"
+                  ? "bg-emerald-600"
+                  : "bg-gray-700 hover:bg-emerald-600"
+              }`}
+            >
+              Due Date
+            </button>
+          </div>
           <StatusFilter filter={filter} setFilter={setFilter} />
         </div>
       </div>
@@ -164,21 +188,6 @@ export default function MainPage() {
       <div className="relative mb-6">
         <div className="absolute left-1/2 -translate-x-1/2">
           <AddItemButton onClick={handleAddItem} />
-        </div>
-
-        {/* Sort By Dropdown */}
-        <div className="flex justify-end">
-          <div className="border border-gray-500 rounded bg-emerald-900 px-4 py-2 text-white shadow-sm">
-            <label className="mr-2 font-medium">Sort by:</label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-emerald-800 border border-gray-600 text-white px-2 py-1 rounded"
-            >
-              <option value="recent">Most Recent</option>
-              <option value="dueDate">Due Date</option>
-            </select>
-          </div>
         </div>
       </div>
 
@@ -191,8 +200,10 @@ export default function MainPage() {
             <ItemCard
               key={item._id}
               {...item}
-              onToggleCompleted={() => toggleCompleted(item._id, item.completed)}
-              onDelete={handleDelete} 
+              onToggleCompleted={() =>
+                toggleCompleted(item._id, item.completed)
+              }
+              onDelete={handleDelete}
             />
           ))}
         </div>
