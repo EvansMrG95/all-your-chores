@@ -185,7 +185,7 @@ export default function MainPage() {
       </div>
 
       {/* Add Item Button */}
-      <div className="relative mb-6">
+      <div className="relative mb-16">
         <div className="absolute left-1/2 -translate-x-1/2">
           <AddItemButton onClick={handleAddItem} />
         </div>
