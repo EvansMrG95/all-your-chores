@@ -100,7 +100,7 @@ export default function MainPage() {
     if (!token) return;
 
     try {
-      await axios.delete(`http://localhost:3001/api/chores/${id}`, {
+      await axios.delete(`https://divide-and-conquer-backend-2.onrender.com/api/chores/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems((prevItems) => prevItems.filter((item) => item._id !== id));
