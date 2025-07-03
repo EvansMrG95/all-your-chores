@@ -4,7 +4,7 @@ export default function StatusFilter({ filter, setFilter }) {
   const inactive = "bg-gray-700 hover:bg-emerald-600";
 
   return (
-    <div className="flex gap-2">
+    <div className="sm: gap-2 flex-wrap">
       <button
         onClick={() => setFilter("notCompleted")}
         className={`${baseStyle} ${filter === "notCompleted" ? active : inactive}`}
